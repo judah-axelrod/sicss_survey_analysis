@@ -20,7 +20,9 @@ mutate(
     )
   )
 
-
+brit_elec_recoded$Q24_CSES <- ifelse(brit_elec_recoded$Q24_CSES < 31, 1,
+                                     ifelse(brit_elec_recoded$Q24_CSES > 30 & 
+                                              brit_elec_recoded$Q24_CSES < 61, 2, 3))
 
 breakdown <- brit_elec_recoded %>% 
   select(
@@ -47,10 +49,6 @@ prolific_data <- tail(prolific_data, -61)
 prolific_data_recoded <- prolific_data %>%
   tail(-2) %>%
   select(polknowledge_1:B02, SC_region, SC_gender, SC_age) %>%
-  mutate_at(.vars = vars(polknowledge_1:polknowledge_6),
-            .funs = funs(case_when(. == TRUE ~ 1,
-                                   . == FALSE ~ 2,
-                                   TRUE ~ -1))) %>%
   mutate(
     B01 = case_when(
       B01 == "Yes, I voted." ~ 1,
@@ -73,8 +71,32 @@ prolific_data_recoded <- prolific_data %>%
       SC_gender == " In another way" ~ 3,
       SC_gender == "Prefer not to say" ~ 4,
       TRUE ~ -999
-    )
-  )
+    ),
+      polknowledge_1 = case_when(
+        polknowledge_1 == 'True' ~ 1,
+        TRUE ~ 0),
+      polknowledge_2 = case_when(
+        polknowledge_2 == 'True' ~ 1,
+        TRUE ~ 0),
+      polknowledge_3 = case_when(
+        polknowledge_3 == 'False' ~ 1,
+        TRUE ~ 0),
+      polknowledge_4 = case_when(
+        polknowledge_4 == 'False' ~ 1,
+        TRUE ~ 0),
+      polknowledge_5 = case_when(
+        polknowledge_5 == 'True' ~ 1,
+        TRUE ~ 0),
+      polknowledge_6 = case_when(
+        polknowledge_6 == 'False' ~ 1,
+        TRUE ~ 0),
+      pol_score = polknowledge_1 + polknowledge_2 + polknowledge_3 + polknowledge_4 + polknowledge_5 + polknowledge_6)
+  
+
+
+prolific_data_recoded$SC_age <- ifelse(prolific_data_recoded$SC_age < 31, 1,
+                                     ifelse(prolific_data_recoded$SC_age > 30 & 
+                                              prolific_data_recoded$SC_age < 61, 2, 3))
 
 weights <- prolific_data_recoded %>% 
   tail(-2) %>%

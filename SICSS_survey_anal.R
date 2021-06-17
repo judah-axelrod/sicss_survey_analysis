@@ -14,6 +14,12 @@ breakdown <- brit_elec %>%
   summarise_all(~mean(., na.rm = T)) %>%
   pivot_longer(x01_1:b04, names_to='qid', values_to='mean') #These are the response means in the original survey
   
+weights_brit_elec <- brit_elec %>% 
+  tail(-2) %>%
+  select(Q24_CSES, Q19_CSES, Q23_CSES) %>%
+  filter(Q24_CSES > -2 & Q19_CSES > -2 & Q23_CSES  > -2) %>%
+  count(Q24_CSES, Q19_CSES, Q23_CSES)%>%
+  mutate(weight = n/sum(n))
 
 
 ########################
@@ -21,18 +27,14 @@ breakdown <- brit_elec %>%
 ########################
 prolific_data <- read_csv('SICSS-survey_June 17, 2021_14.06.csv')
 
-weights <- prolific_data %>% 
-  tail(-2) %>%
-  count(SC_age, SC_region, SC_gender, SC_ethnicity, SC_education) %>%
-  mutate(weight = n/sum(n))
 
-prolific_data <- prolific_data %>%
+prolific_data_recoded <- prolific_data %>%
   tail(-2) %>%
-  select(polknowledge_1:B02, pid1) %>%
+  select(polknowledge_1:B02, pid1, SC_region, SC_gender, SC_age) %>%
   mutate_at(.vars = vars(polknowledge_1:polknowledge_6),
             .funs = funs(case_when(. == TRUE ~ 1,
-                              . == FALSE ~ 2,
-                              TRUE ~ -1))) %>%
+                                   . == FALSE ~ 2,
+                                   TRUE ~ -1))) %>%
   mutate(
     B01 = case_when(
       B01 == "Yes, I voted." ~ 1,
@@ -53,7 +55,7 @@ prolific_data <- prolific_data %>%
       B02 == "Prefer not to say" ~ -2,
       B02 == "Don't remember/Don't know" ~ -1,
       TRUE ~ -999
-     ),
+    ),
     pid1 = case_when(
       pid1 == "Labour" ~ 1,
       pid1 == "Conservative" ~ 2,
@@ -63,8 +65,28 @@ prolific_data <- prolific_data %>%
       pid1 == "Green" ~ 6,
       pid1 == "Don't know" ~ -1,
       TRUE ~ -999
+    ),
+    SC_region = case_when(
+      SC_region == "England" ~ 1,
+      SC_region == "Scotland" ~ 2,
+      SC_region == "Wales" ~ -3,
+      SC_region == "Northern Ireland" ~ 4,
+      SC_region == "Other" ~5,
+      TRUE ~ -999
+    ),
+    SC_gender = case_when(
+      SC_gender == "Male" ~ 1,
+      SC_gender == "Female" ~ 2,
+      SC_gender == " In another way" ~ 3,
+      SC_gender == "Prefer not to say" ~ 4,
+      TRUE ~ -999
     )
   )
+
+weights <- prolific_data_recoded %>% 
+  tail(-2) %>%
+  count(SC_age, SC_region, SC_gender) %>%
+  mutate(weight = n/sum(n))
 
 prolific_merge <- bind_cols(prolific_data, weights)
                 

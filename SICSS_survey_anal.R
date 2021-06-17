@@ -17,7 +17,26 @@ mutate(
     b02 = case_when(
       b02 == 2 ~ 1,
       TRUE ~ 0
-    )
+    ),
+    x01_1 = case_when(
+      x01_1 == 1 ~ 1,
+      TRUE ~ 0),
+    x01_2 = case_when(
+      x01_2 == 1 ~ 1,
+      TRUE ~ 0),
+    x01_3 = case_when(
+      x01_3 == 2 ~ 1,
+      TRUE ~ 0),
+    x01_4 = case_when(
+      x01_4 == 2 ~ 1,
+      TRUE ~ 0),
+    x01_5 = case_when(
+      x01_5 == 1 ~ 1,
+      TRUE ~ 0),
+    x01_6 = case_when(
+      x01_6 == 2 ~ 1,
+      TRUE ~ 0),
+    pol_score = x01_1 + x01_2 + x01_3 + x01_4 + x01_5 + x01_6
   )
 
 brit_elec_recoded$Q24_CSES <- ifelse(brit_elec_recoded$Q24_CSES < 31, 1,

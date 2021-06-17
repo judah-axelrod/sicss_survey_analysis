@@ -66,4 +66,5 @@ prolific_data <- prolific_data %>%
     )
   )
 
+prolific_merge <- bind_cols(prolific_data, weights)
                 

@@ -25,7 +25,7 @@ weights_brit_elec <- brit_elec %>%
 ########################
 #Our survey results
 ########################
-prolific_data <- read_csv('SICSS-survey_June 17, 2021_14.06.csv')
+prolific_data <- read_csv('SICSS-survey_June 17, 2021_15.16.csv')
 
 
 prolific_data_recoded <- prolific_data %>%

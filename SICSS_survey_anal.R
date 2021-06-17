@@ -19,7 +19,7 @@ breakdown <- brit_elec %>%
 ########################
 #Our survey results
 ########################
-prolific_data <- read_csv('sample_results.csv')
+prolific_data <- read_csv('SICSS-survey_June 17, 2021_14.06.csv')
 
 weights <- prolific_data %>% 
   tail(-2) %>%
